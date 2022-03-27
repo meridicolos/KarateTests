@@ -1,2 +1,20 @@
-16:06:05.730 [main] INFO  com.intuit.karate - karate.env system property was:  
-16:06:05.776 [main] INFO  com.intuit.karate - [print] Terminator3
+17:24:07.126 [main] INFO  com.intuit.karate - karate.env system property was:  
+17:24:07.173 [main] INFO  com.intuit.karate - [print] Terminator
+10:11:25.892 [main] INFO  com.intuit.karate - karate.env system property was:  
+10:11:26.017 [main] INFO  com.intuit.karate - [print] Terminator
+10:12:08.435 [main] INFO  com.intuit.karate - karate.env system property was:  
+10:12:08.529 [main] INFO  com.intuit.karate - [print] Terminator
+10:24:51.540 [main] INFO  com.intuit.karate - karate.env system property was:  
+10:24:51.618 [main] INFO  com.intuit.karate - [print] Terminator
+10:39:04.116 [main] INFO  com.intuit.karate.Runner - waiting for parallel features to complete ...
+10:39:04.273 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - karate.env system property was:  
+10:39:04.335 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - [print] Terminator
+10:39:04.429 [pool-1-thread-1] INFO  com.intuit.karate.Runner - <<pass>> feature 1 of 1: src/test/java/examples/users/users.feature
+10:39:40.215 [main] INFO  com.intuit.karate.Runner - waiting for parallel features to complete ...
+10:39:40.356 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - karate.env system property was:  
+10:39:40.418 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - [print] Terminator
+10:39:40.497 [pool-1-thread-1] INFO  com.intuit.karate.Runner - <<pass>> feature 1 of 1: src/test/java/examples/users/users.feature
+10:40:50.444 [main] INFO  com.intuit.karate - karate.env system property was:  
+10:40:50.491 [main] INFO  com.intuit.karate - [print] Terminator
+10:41:18.660 [main] INFO  com.intuit.karate - karate.env system property was:  
+10:41:18.722 [main] INFO  com.intuit.karate - [print] Terminator
