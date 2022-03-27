@@ -32,13 +32,6 @@
             <artifactId>cucumber-reporting</artifactId>
             <version>5.7.0</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.github.mkolisnyk/cucumber-runner -->
-        <dependency>
-            <groupId>com.github.mkolisnyk</groupId>
-            <artifactId>cucumber-runner</artifactId>
-            <version>1.0.8</version>
-        </dependency>
-
     </dependencies>
 
     <build>
