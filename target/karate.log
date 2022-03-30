@@ -1384,3 +1384,38 @@ function selectNodeText(selectElement, event)
 17:20:37.265 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - [print] Terminator vs Robocop
 17:20:37.315 [pool-1-thread-1] INFO  com.intuit.karate.Runner - <<pass>> feature 1 of 2: classpath:examples/users/Terminator.feature
 17:20:37.315 [pool-1-thread-2] INFO  com.intuit.karate.Runner - <<pass>> feature 2 of 2: classpath:examples/users/users.feature
+18:06:17.808 [main] INFO  com.intuit.karate.Runner - waiting for parallel features to complete ...
+18:06:17.957 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - karate.env system property was:  
+18:06:17.957 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - karate.env system property was:  
+18:06:18.062 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - [print] Terminator5
+18:06:18.065 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - [print] Terminator vs Robocop
+18:06:18.098 [pool-1-thread-1] INFO  com.intuit.karate.Runner - <<pass>> feature 1 of 2: classpath:examples/users/Terminator.feature
+18:06:18.098 [pool-1-thread-2] INFO  com.intuit.karate.Runner - <<pass>> feature 2 of 2: classpath:examples/users/users.feature
+18:09:00.637 [main] INFO  com.intuit.karate.Runner - waiting for parallel features to complete ...
+18:09:00.768 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - karate.env system property was:  
+18:09:00.768 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - karate.env system property was:  
+18:09:00.868 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - [print] Terminator5
+18:09:00.872 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - [print] Terminator vs Robocop
+18:09:00.908 [pool-1-thread-2] INFO  com.intuit.karate.Runner - <<pass>> feature 2 of 2: classpath:examples/users/users.feature
+18:09:00.908 [pool-1-thread-1] INFO  com.intuit.karate.Runner - <<pass>> feature 1 of 2: classpath:examples/users/Terminator.feature
+18:10:06.054 [main] INFO  com.intuit.karate.Runner - waiting for parallel features to complete ...
+18:10:06.183 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - karate.env system property was:  
+18:10:06.183 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - karate.env system property was:  
+18:10:06.333 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - [print] Terminator5
+18:10:06.337 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - [print] Terminator vs Robocop
+18:10:06.370 [pool-1-thread-1] INFO  com.intuit.karate.Runner - <<pass>> feature 1 of 2: classpath:examples/users/Terminator.feature
+18:10:06.370 [pool-1-thread-2] INFO  com.intuit.karate.Runner - <<pass>> feature 2 of 2: classpath:examples/users/users.feature
+18:11:25.586 [main] INFO  com.intuit.karate.Runner - waiting for parallel features to complete ...
+18:11:25.720 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - karate.env system property was:  
+18:11:25.720 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - karate.env system property was:  
+18:11:25.864 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - [print] Terminator5
+18:11:25.867 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - [print] Terminator vs Robocop
+18:11:25.901 [pool-1-thread-1] INFO  com.intuit.karate.Runner - <<pass>> feature 1 of 2: classpath:examples/users/Terminator.feature
+18:11:25.901 [pool-1-thread-2] INFO  com.intuit.karate.Runner - <<pass>> feature 2 of 2: classpath:examples/users/users.feature
+18:15:40.021 [main] INFO  com.intuit.karate.Runner - waiting for parallel features to complete ...
+18:15:40.152 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - karate.env system property was:  
+18:15:40.152 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - karate.env system property was:  
+18:15:40.267 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - [print] Terminator5
+18:15:40.272 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - [print] Terminator vs Robocop
+18:15:40.307 [pool-1-thread-1] INFO  com.intuit.karate.Runner - <<pass>> feature 1 of 2: classpath:examples/users/Terminator.feature
+18:15:40.307 [pool-1-thread-2] INFO  com.intuit.karate.Runner - <<pass>> feature 2 of 2: classpath:examples/users/users.feature

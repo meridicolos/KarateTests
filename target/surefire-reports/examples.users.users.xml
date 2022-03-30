@@ -1,5 +1,5 @@
-<testsuite failures="0" name="examples/users/users.feature" skipped="0" tests="1" time="0.002678">
-  <testcase classname="examples.users.users" name="test" time="0.002678">
+<testsuite failures="0" name="examples/users/users.feature" skipped="0" tests="1" time="0.002277">
+  <testcase classname="examples.users.users" name="test" time="0.002277">
     <system-out>Then print 'Terminator5' .................................................. passed</system-out>
   </testcase>
 </testsuite>
