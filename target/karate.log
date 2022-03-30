@@ -1419,3 +1419,10 @@ function selectNodeText(selectElement, event)
 18:15:40.272 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - [print] Terminator vs Robocop
 18:15:40.307 [pool-1-thread-1] INFO  com.intuit.karate.Runner - <<pass>> feature 1 of 2: classpath:examples/users/Terminator.feature
 18:15:40.307 [pool-1-thread-2] INFO  com.intuit.karate.Runner - <<pass>> feature 2 of 2: classpath:examples/users/users.feature
+18:33:47.003 [main] INFO  com.intuit.karate.Runner - waiting for parallel features to complete ...
+18:33:47.166 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - karate.env system property was:  
+18:33:47.166 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - karate.env system property was:  
+18:33:47.285 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - [print] Terminator9
+18:33:47.290 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - [print] Terminator vs Robocop
+18:33:47.331 [pool-1-thread-1] INFO  com.intuit.karate.Runner - <<pass>> feature 1 of 2: classpath:examples/users/Terminator.feature
+18:33:47.331 [pool-1-thread-2] INFO  com.intuit.karate.Runner - <<pass>> feature 2 of 2: classpath:examples/users/users.feature
