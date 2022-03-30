@@ -16,7 +16,7 @@ class UsersRunner {
 
     @Test
     void testParallel() {
-        Results results = Runner.path("classpath:").parallel(5);
+        Results results = Runner.path("classpath:examples/user").parallel(5);
         assertEquals(0, results.getFailCount(), results.getErrorMessages());
         generateReport(results.getReportDir());
     }
