@@ -1,0 +1,6 @@
+<testsuite failures="0" name="src/test/java/examples/users/Terminator.feature" skipped="0" tests="1" time="0.004041">
+  <testcase classname="src.test.java.examples.users.Terminator" name="test" time="0.004041">
+    <system-out>* configure driver = { type: 'chrome' } ................................... passed
+Then print 'Terminator vs Robocop' ........................................ passed</system-out>
+  </testcase>
+</testsuite>
