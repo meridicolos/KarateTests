@@ -10,4 +10,4 @@ Feature: testKarate
 #   Given driver 'https://www.travelski.com/'
 #   Then delay(10000)
 #   Then print text('#didomi-popup > div > div > div > div.didomi-popup-notice-text-container > div.didomi-popup-notice-text > span > h1')
-    Then print 'Terminator6'
+    Then print 'Terminator9'
