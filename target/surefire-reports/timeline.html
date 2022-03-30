@@ -12,8 +12,8 @@
   <body>
     <div id="visualization"></div>
     <script>
-var groups = new vis.DataSet([{"id":1,"content":"ForkJoinPool-1-worker-1"},{"id":2,"content":"ForkJoinPool-1-worker-2"}]);
-var items = new vis.DataSet([{"id":1,"group":1,"content":"Terminator[1:8]","start":1124,"end":1138,"title":"Terminator[1:8] 02:00:01.124-02:00:01.138 test"},{"id":2,"group":2,"content":"users[1:8]","start":1124,"end":1135,"title":"users[1:8] 02:00:01.124-02:00:01.135 test"}]);
+var groups = new vis.DataSet([{"id":1,"content":"ForkJoinPool-1-worker-2"},{"id":2,"content":"ForkJoinPool-1-worker-1"}]);
+var items = new vis.DataSet([{"id":1,"group":1,"content":"Terminator[1:8]","start":1045,"end":1059,"title":"Terminator[1:8] 02:00:01.045-02:00:01.059 test"},{"id":2,"group":2,"content":"users[1:8]","start":1045,"end":1057,"title":"users[1:8] 02:00:01.045-02:00:01.057 test"}]);
 var container = document.getElementById('visualization');
 var timeline = new vis.Timeline(container);
 timeline.setOptions({ groupOrder: 'content' });

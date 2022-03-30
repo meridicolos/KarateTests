@@ -1426,3 +1426,17 @@ function selectNodeText(selectElement, event)
 18:33:47.290 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - [print] Terminator vs Robocop
 18:33:47.331 [pool-1-thread-1] INFO  com.intuit.karate.Runner - <<pass>> feature 1 of 2: classpath:examples/users/Terminator.feature
 18:33:47.331 [pool-1-thread-2] INFO  com.intuit.karate.Runner - <<pass>> feature 2 of 2: classpath:examples/users/users.feature
+18:37:30.362 [main] INFO  com.intuit.karate.Runner - waiting for parallel features to complete ...
+18:37:30.498 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - karate.env system property was:  
+18:37:30.498 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - karate.env system property was:  
+18:37:30.607 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - [print] Terminator9
+18:37:30.612 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - [print] Terminator vs Robocop
+18:37:30.647 [pool-1-thread-2] INFO  com.intuit.karate.Runner - <<pass>> feature 2 of 2: classpath:examples/users/users.feature
+18:37:30.647 [pool-1-thread-1] INFO  com.intuit.karate.Runner - <<pass>> feature 1 of 2: classpath:examples/users/Terminator.feature
+18:38:36.235 [main] INFO  com.intuit.karate.Runner - waiting for parallel features to complete ...
+18:38:36.373 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - karate.env system property was:  
+18:38:36.373 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - karate.env system property was:  
+18:38:36.471 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - [print] Terminator9
+18:38:36.475 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - [print] Terminator vs Robocop
+18:38:36.511 [pool-1-thread-1] INFO  com.intuit.karate.Runner - <<pass>> feature 1 of 2: classpath:examples/users/Terminator.feature
+18:38:36.511 [pool-1-thread-2] INFO  com.intuit.karate.Runner - <<pass>> feature 2 of 2: classpath:examples/users/users.feature
