@@ -18,3 +18,1369 @@
 10:40:50.491 [main] INFO  com.intuit.karate - [print] Terminator
 10:41:18.660 [main] INFO  com.intuit.karate - karate.env system property was:  
 10:41:18.722 [main] INFO  com.intuit.karate - [print] Terminator
+18:12:58.959 [main] INFO  com.intuit.karate - karate.env system property was:  
+18:12:59.031 [main] DEBUG com.intuit.karate.shell.Command - found / verified free local port: 9222
+18:12:59.032 [chrome_1648393979030] DEBUG c.i.k.driver.chrome_1648393979030 - command: [C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, --remote-debugging-port=9222, --no-first-run, --user-data-dir=C:\Users\Pavel\KarateTests\target\chrome_1648393979030, --disable-popup-blocking]
+18:12:59.038 [main] DEBUG c.i.k.driver.chrome_1648393979030 - poll attempt #0 for port to be ready - localhost:9222
+18:12:59.221 [chrome_1648393979030-out] DEBUG c.i.k.driver.chrome_1648393979030 - 
+18:12:59.222 [chrome_1648393979030-out] DEBUG c.i.k.driver.chrome_1648393979030 - DevTools listening on ws://127.0.0.1:9222/devtools/browser/e26918ca-d648-4900-bf45-2fcca9d5f708
+18:13:00.552 [main] DEBUG com.intuit.karate - request:
+1 > GET http://localhost:9222
+1 > Accept-Encoding: gzip,deflate
+1 > Connection: Keep-Alive
+1 > Host: localhost:9222
+1 > User-Agent: Apache-HttpClient/4.5.12 (Java/1.8.0_181)
+
+18:13:00.591 [main] DEBUG com.intuit.karate - response time in milliseconds: 38.38
+1 < 200
+1 < Content-Length: 5742
+1 < Content-Type: text/html; charset=UTF-8
+1 < X-Frame-Options: DENY
+<!doctype html>
+<html lang="en">
+<title>Inspectable pages</title>
+<meta name="referrer" content="no-referrer">
+<style>
+body {
+  color: #222;
+  font-family: Helvetica, Arial, sans-serif;
+  margin: 0;
+  text-shadow: rgba(255, 255, 255, 0.496094) 0px 1px 0px;
+}
+
+#caption {
+  font-size: 16px;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  margin-left: 20px;
+  height: 20px;
+  text-align: left;
+}
+
+#items {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+}
+
+.item {
+  color: #222;
+  display: flex;
+  flex-direction: row;
+  text-decoration: none;
+  padding: 10px;
+  transition-property: background-color, border-color;
+  transition: background-color 0.15s, 0.15s;
+  transition-delay: 0ms, 0ms;
+}
+
+.item:not(.connected):hover {
+  background-color: rgba(242, 242, 242, 1);
+  border-color: rgba(110, 116, 128, 1);
+  color: black;
+}
+
+.item.connected:hover {
+  border-color: rgba(184, 184, 184, 1);
+  color: rgb(110, 116, 128);
+}
+
+.item.custom {
+    cursor: pointer;
+}
+
+.description {
+  display: flex;
+  flex-direction: column;
+}
+
+.title, .subtitle, .custom-url {
+  font-size: 13px;
+  margin: 4px 0px 0px 6px;
+  overflow: hidden;
+  padding-left: 20px;
+}
+
+.title {
+  background-repeat: no-repeat;
+  background-size: 16px;
+  font-size: 15px;
+}
+
+.custom-url {
+  display: flex;
+}
+
+.custom-url-label {
+  flex: 0 0 auto;
+}
+
+.custom-url-value {
+  font-family: monospace;
+  margin-left: 1em;
+}
+
+</style>
+
+<script>
+
+function onLoad() {
+  var tabsListRequest = new XMLHttpRequest();
+  tabsListRequest.open('GET', '/json/list', true);
+  tabsListRequest.onreadystatechange = onReady;
+  tabsListRequest.send();
+}
+
+function onReady() {
+  if(this.readyState == 4 && this.status == 200) {
+    if(this.response != null)
+      var responseJSON = JSON.parse(this.response);
+      for (var i = 0; i < responseJSON.length; ++i)
+        appendItem(responseJSON[i]);
+  }
+}
+
+function onBlur(event) {
+  const selection = window.getSelection();
+  selection.removeAllRanges();
+  event.stopPropagation();
+  event.preventDefault();
+}
+
+function onFocus(selectElement, event) {
+  selectNodeText(selectElement, event);
+  event.stopPropagation();
+  event.preventDefault();
+}
+
+function customFrontendURL(url) {
+  if (!url || !window.location.hash)
+    return null;
+
+  var hashParams = new URLSearchParams(location.hash.substring(1));
+  if (!hashParams.get("custom"))
+    return null;
+
+  var searchIndex = url.indexOf("?");
+  if (searchIndex === -1)
+    return null;
+  var originalParams = url.substring(searchIndex + 1);
+  if (hashParams.get("experiments"))
+    originalParams += "&experiments=true";
+
+  return "devtools://devtools/custom/inspector.html?" + originalParams;
+}
+
+function appendItem(item_object) {
+  var item_element;
+  var customURL = customFrontendURL(item_object.devtoolsFrontendUrl);
+  if (customURL) {
+    item_element = document.createElement('div');
+    item_element.title = item_object.title;
+    item_element.className = 'custom';
+  } else if (item_object.devtoolsFrontendUrl) {
+    item_element = document.createElement('a');
+    item_element.href = item_object.devtoolsFrontendUrl;
+    item_element.title = item_object.title;
+  } else {
+    item_element = document.createElement('div');
+    item_element.className = 'connected';
+    item_element.title = 'The tab already has an active debug session';
+  }
+  item_element.classList.add('item');
+
+  var description = document.createElement('div');
+  description.className = 'description';
+
+  var title = document.createElement('div');
+  title.className = 'title';
+  title.textContent = item_object.description || item_object.title;
+  if (item_object.faviconUrl) {
+    title.style.backgroundImage = 'url(' + item_object.faviconUrl + ')';
+  }
+  description.appendChild(title);
+
+  var subtitle = document.createElement('div');
+  subtitle.className = 'subtitle';
+  subtitle.textContent = (item_object.url || '').substring(0, 300);
+  description.appendChild(subtitle);
+
+  if (customURL) {
+    var urlContainer = document.createElement('div');
+    urlContainer.classList.add("custom-url");
+    var urlLabel = document.createElement('div');
+    urlLabel.classList.add("custom-url-label");
+    urlLabel.textContent = "Click to copy URL:";
+    urlContainer.appendChild(urlLabel);
+    var urlValue = document.createElement('div');
+    urlValue.classList.add("custom-url-value");
+    urlValue.textContent = customURL;
+    urlValue.tabIndex = 0;
+    urlValue.addEventListener('blur', onBlur);
+    urlValue.addEventListener('focus', event => onFocus(urlValue, event));
+    urlContainer.appendChild(urlValue);
+    description.appendChild(urlContainer);
+    item_element.addEventListener('click', selectNodeText.bind(null, urlValue));
+  }
+
+  item_element.appendChild(description);
+
+  document.getElementById('items').appendChild(item_element);
+}
+
+function selectNodeText(selectElement, event)
+{
+  var selection = window.getSelection();
+  if (!selection.isCollapsed)
+    return;
+  var range = document.createRange();
+  range.selectNode(selectElement);
+  selection.removeAllRanges();
+  selection.addRange(range);
+  event.stopPropagation();
+  event.preventDefault();
+}
+</script>
+</head>
+<body onload='onLoad()'>
+  <div role='main'>
+    <div id='caption' role='heading' aria-level='1'>Inspectable pages</div>
+    <div style="margin: 4px">
+      <span style="color: red">WARNING:</span> This page is deprecated and
+      will be removed by m96. Please use
+      <input type="text" readonly value="chrome://inspect" size="13"
+          style="background-color: #e0e0e0; border-width: 0; font-weight: 800">
+      </input> instead. Use <a href="http://crbug.com/1232509"
+        >crbug.com/1232509</a> for comments, questions and feedback.
+    </div>
+  </div>
+
+    <hr>
+    <div id='items'>
+    </div>
+  </div>
+</body>
+</html>
+
+
+18:13:00.601 [main] WARN  com.intuit.karate - xml parsing failed, response data type set to string: org.xml.sax.SAXParseException; lineNumber: 1; columnNumber: 3; The markup in the document preceding the root element must be well-formed.
+18:13:00.602 [main] DEBUG com.intuit.karate.shell.Command - ready to accept http connections after 1025 ms - http://localhost:9222
+18:13:00.606 [main] DEBUG com.intuit.karate - request:
+1 > GET http://localhost:9222/json
+1 > Accept-Encoding: gzip,deflate
+1 > Connection: Keep-Alive
+1 > Host: localhost:9222
+1 > User-Agent: Apache-HttpClient/4.5.12 (Java/1.8.0_181)
+
+18:13:00.607 [main] DEBUG com.intuit.karate - response time in milliseconds: 1.36
+1 < 200
+1 < Content-Length: 2182
+1 < Content-Type: application/json; charset=UTF-8
+[ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/B584B39BB04E9D7C29695277D7F1EDB2",
+   "id": "B584B39BB04E9D7C29695277D7F1EDB2",
+   "title": "CryptoTokenExtension",
+   "type": "background_page",
+   "url": "chrome-extension://kmendfapggjehodndflmmgagdbamhnfd/_generated_background_page.html",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/B584B39BB04E9D7C29695277D7F1EDB2"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/89F3B13F7F4E03F07948FCC7D42C712E",
+   "id": "89F3B13F7F4E03F07948FCC7D42C712E",
+   "title": "Google Network Speech",
+   "type": "background_page",
+   "url": "chrome-extension://neajdppkdcdipfabeoofebfddakdcjhd/_generated_background_page.html",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/89F3B13F7F4E03F07948FCC7D42C712E"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/06AE50BF7125A8362E948AB32903E5C1",
+   "id": "06AE50BF7125A8362E948AB32903E5C1",
+   "title": "Feedback",
+   "type": "background_page",
+   "url": "chrome-extension://gfdkimpbcpahaombhbimeihdjnejgicl/_generated_background_page.html",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/06AE50BF7125A8362E948AB32903E5C1"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/DB91599D86D5320AD78423175601D538",
+   "id": "DB91599D86D5320AD78423175601D538",
+   "title": "Google Hangouts",
+   "type": "background_page",
+   "url": "chrome-extension://nkeimhogjdpnpccoofpliimaahmaaome/background.html",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/DB91599D86D5320AD78423175601D538"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/0BA522D7A3950CDF9C88E64F3FB5E33F",
+   "id": "0BA522D7A3950CDF9C88E64F3FB5E33F",
+   "title": "Welcome to Chrome",
+   "type": "page",
+   "url": "chrome://welcome/",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/0BA522D7A3950CDF9C88E64F3FB5E33F"
+} ]
+
+
+18:13:00.614 [main] DEBUG c.i.k.driver.chrome_1648393979030 - root frame id: 0BA522D7A3950CDF9C88E64F3FB5E33F
+18:13:01.584 [chrome_1648393979030-out] DEBUG c.i.k.driver.chrome_1648393979030 - [2504:29428:0327/181301.584:ERROR:device_event_log_impl.cc(214)] [18:13:01.584] USB: usb_device_handle_win.cc:1049 Failed to read descriptor from node connection: A device attached to the system is not functioning. (0x1F)
+18:13:01.585 [chrome_1648393979030-out] DEBUG c.i.k.driver.chrome_1648393979030 - [2504:29428:0327/181301.584:ERROR:device_event_log_impl.cc(214)] [18:13:01.584] USB: usb_device_handle_win.cc:1049 Failed to read descriptor from node connection: A device attached to the system is not functioning. (0x1F)
+18:13:01.590 [nioEventLoopGroup-2-1] DEBUG c.i.k.netty.WebSocketClientHandler - websocket client connected
+18:13:01.592 [main] DEBUG c.i.k.driver.chrome_1648393979030 - >> {"method":"Target.activateTarget","params":{"targetId":"0BA522D7A3950CDF9C88E64F3FB5E33F"},"id":1}
+18:13:01.636 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648393979030 - << {"id":1,"result":{}}
+18:13:01.638 [main] DEBUG c.i.k.driver.chrome_1648393979030 - >> {"method":"Page.enable","id":2}
+18:13:01.649 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648393979030 - << {"id":2,"result":{}}
+18:13:01.650 [main] DEBUG c.i.k.driver.chrome_1648393979030 - >> {"method":"Runtime.enable","id":3}
+18:13:01.652 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648393979030 - << {"method":"Runtime.executionContextCreated","params":{"context":{"id":1,"origin":"chrome://welcome","name":"","uniqueId":"5822483156246816242.-740674950566252298","auxData":{"isDefault":true,"type":"default","frameId":"0BA522D7A3950CDF9C88E64F3FB5E33F"}}}}
+18:13:01.653 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648393979030 - << {"id":3,"result":{}}
+18:13:01.654 [main] DEBUG c.i.k.driver.chrome_1648393979030 - >> {"method":"Target.setAutoAttach","params":{"autoAttach":true,"waitForDebuggerOnStart":false,"flatten":true},"id":4}
+18:13:01.657 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648393979030 - << {"id":4,"result":{}}
+18:13:01.658 [main] DEBUG c.i.k.driver.chrome_1648393979030 - >> {"method":"Browser.getWindowForTarget","params":{"targetId":"0BA522D7A3950CDF9C88E64F3FB5E33F"},"id":5}
+18:13:01.667 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648393979030 - << {"id":5,"result":{"windowId":1,"bounds":{"left":10,"top":10,"width":1050,"height":660,"windowState":"normal"}}}
+18:13:02.027 [main] DEBUG c.i.k.driver.chrome_1648393979030 - >> {"method":"Page.navigate","params":{"url":"https:\/\/www.travelski.com\/"},"id":6}
+18:13:03.111 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648393979030 - << {"id":6,"result":{"frameId":"0BA522D7A3950CDF9C88E64F3FB5E33F","loaderId":"BDE92BCD9F33A4CDE48825AD8D4FFF78"}}
+18:13:03.113 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648393979030 - << {"method":"Runtime.executionContextsCleared","params":{}}
+18:13:03.114 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648393979030 - << {"method":"Page.frameStartedLoading","params":{"frameId":"0BA522D7A3950CDF9C88E64F3FB5E33F"}}
+18:13:03.128 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648393979030 - << {"method":"Runtime.executionContextsCleared","params":{}}
+18:13:03.129 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648393979030 - << {"method":"Page.frameNavigated","params":{"frame":{"id":"0BA522D7A3950CDF9C88E64F3FB5E33F","loaderId":"BDE92BCD9F33A4CDE48825AD8D4FFF78","url":"https://www.travelski.com/","domainAndRegistry":"travelski.com","securityOrigin":"https://www.travelski.com","mimeType":"text/html","adFrameStatus":{"adFrameType":"none"},"secureContextType":"Secure","crossOriginIsolatedContextType":"NotIsolated","gatedAPIFeatures":[]},"type":"Navigation"}}
+18:13:03.131 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648393979030 - << {"method":"Runtime.executionContextCreated","params":{"context":{"id":1,"origin":"https://www.travelski.com","name":"","uniqueId":"6747324886481410274.3107442591250294102","auxData":{"isDefault":true,"type":"default","frameId":"0BA522D7A3950CDF9C88E64F3FB5E33F"}}}}
+18:13:05.610 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648393979030 - << {"method":"Runtime.exceptionThrown","params":{"timestamp":1.648393985608553e+12,"exceptionDetails":{"exceptionId":1,"text":"Uncaught","lineNumber":628,"columnNumber":18,"scriptId":"32","url":"https://www.travelski.com/","stackTrace":{"callFrames":[{"functionName":"","scriptId":"32","url":"https://www.travelski.com/","lineNumber":628,"columnNumber":18},{"functionName":"","scriptId":"32","url":"https://www.travelski.com/","lineNumber":657,"columnNumber":2}]},"exception":{"type":"object","subtype":"error","className":"TypeError","description":"TypeError: Cannot read properties of null (reading 'addEventListener')\n    at https://www.travelski.com/:629:19\n    at https://www.travelski.com/:658:3","objectId":"451933360627796876.1.1","preview":{"type":"object","subtype":"error","description":"TypeError: Cannot read properties of null (reading 'addEventListener')\n    at https://www.travelski.com/:629:19\n    at https://www.travelski.com/:658:3","overflow":false,"properties":[{"name":"stack","type":"string","value": ...
+18:13:05.629 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648393979030 - << {"method":"Runtime.consoleAPICalled","params":{"type":"log","args":[{"type":"string","value":"Maxymizer test initializer is not defined yet. Setting toStart = true;"}],"executionContextId":1,"timestamp":1.648393985628324e+12,"stackTrace":{"callFrames":[{"functionName":"e","scriptId":"27","url":"https://www.travelski.com/Content/210701094631_5d55777619a3ea6f5ad88670.js?ts=210705071451","lineNumber":1,"columnNumber":657},{"functionName":"","scriptId":"36","url":"https://www.travelski.com/","lineNumber":886,"columnNumber":14},{"functionName":"","scriptId":"36","url":"https://www.travelski.com/","lineNumber":2333,"columnNumber":2}]}}}
+18:13:05.652 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648393979030 - << {"method":"Runtime.exceptionThrown","params":{"timestamp":1.648393985650763e+12,"exceptionDetails":{"exceptionId":2,"text":"Uncaught","lineNumber":2462,"columnNumber":21,"scriptId":"37","url":"https://www.travelski.com/","exception":{"type":"object","subtype":"error","className":"SyntaxError","description":"SyntaxError: Invalid or unexpected token","objectId":"451933360627796876.1.2","preview":{"type":"object","subtype":"error","description":"SyntaxError: Invalid or unexpected token","overflow":false,"properties":[{"name":"stack","type":"string","value":"SyntaxError: Invalid or unexpected token"},{"name":"message","type":"string","value":"Invalid or unexpected token"}]}},"executionContextId":1}}}
+18:13:05.668 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648393979030 - << {"method":"Page.domContentEventFired","params":{"timestamp":252508.985151}}
+18:13:05.671 [main] INFO  com.intuit.karate - [print] Terminator5
+18:13:05.672 [main] DEBUG c.i.k.driver.chrome_1648393979030 - >> {"method":"Target.closeTarget","params":{"targetId":"0BA522D7A3950CDF9C88E64F3FB5E33F"},"id":7}
+18:13:05.674 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648393979030 - << {"id":7,"result":{"success":true}}
+18:13:05.677 [nioEventLoopGroup-2-1] DEBUG c.i.k.netty.WebSocketClientHandler - websocket client disconnected
+18:13:05.678 [main] DEBUG com.intuit.karate.shell.Command - closing command: chrome_1648393979030
+18:13:05.739 [chrome_1648393979030] WARN  com.intuit.karate.shell.Command - exit code was non-zero: 1 - [C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, --remote-debugging-port=9222, --no-first-run, --user-data-dir=C:\Users\Pavel\KarateTests\target\chrome_1648393979030, --disable-popup-blocking]
+16:47:54.427 [main] INFO  com.intuit.karate.Runner - waiting for parallel features to complete ...
+16:47:54.596 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - karate.env system property was:  
+16:47:54.731 [ForkJoinPool-1-worker-1] DEBUG com.intuit.karate.shell.Command - found / verified free local port: 9222
+16:47:54.733 [chrome_1648648074730] DEBUG c.i.k.driver.chrome_1648648074730 - command: [C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, --remote-debugging-port=9222, --no-first-run, --user-data-dir=C:\Users\Pavel\KarateTests\target\chrome_1648648074730, --disable-popup-blocking]
+16:47:54.739 [ForkJoinPool-1-worker-1] DEBUG c.i.k.driver.chrome_1648648074730 - poll attempt #0 for port to be ready - localhost:9222
+16:47:54.952 [chrome_1648648074730-out] DEBUG c.i.k.driver.chrome_1648648074730 - 
+16:47:54.952 [chrome_1648648074730-out] DEBUG c.i.k.driver.chrome_1648648074730 - DevTools listening on ws://127.0.0.1:9222/devtools/browser/9ace28ef-5821-49a2-9dc5-fe0c859e07bc
+16:47:56.491 [ForkJoinPool-1-worker-1] DEBUG com.intuit.karate - request:
+1 > GET http://localhost:9222
+1 > Accept-Encoding: gzip,deflate
+1 > Connection: Keep-Alive
+1 > Host: localhost:9222
+1 > User-Agent: Apache-HttpClient/4.5.12 (Java/1.8.0_181)
+
+16:47:56.541 [ForkJoinPool-1-worker-1] DEBUG com.intuit.karate - response time in milliseconds: 45.94
+1 < 200
+1 < Content-Length: 5742
+1 < Content-Type: text/html; charset=UTF-8
+1 < X-Frame-Options: DENY
+<!doctype html>
+<html lang="en">
+<title>Inspectable pages</title>
+<meta name="referrer" content="no-referrer">
+<style>
+body {
+  color: #222;
+  font-family: Helvetica, Arial, sans-serif;
+  margin: 0;
+  text-shadow: rgba(255, 255, 255, 0.496094) 0px 1px 0px;
+}
+
+#caption {
+  font-size: 16px;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  margin-left: 20px;
+  height: 20px;
+  text-align: left;
+}
+
+#items {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+}
+
+.item {
+  color: #222;
+  display: flex;
+  flex-direction: row;
+  text-decoration: none;
+  padding: 10px;
+  transition-property: background-color, border-color;
+  transition: background-color 0.15s, 0.15s;
+  transition-delay: 0ms, 0ms;
+}
+
+.item:not(.connected):hover {
+  background-color: rgba(242, 242, 242, 1);
+  border-color: rgba(110, 116, 128, 1);
+  color: black;
+}
+
+.item.connected:hover {
+  border-color: rgba(184, 184, 184, 1);
+  color: rgb(110, 116, 128);
+}
+
+.item.custom {
+    cursor: pointer;
+}
+
+.description {
+  display: flex;
+  flex-direction: column;
+}
+
+.title, .subtitle, .custom-url {
+  font-size: 13px;
+  margin: 4px 0px 0px 6px;
+  overflow: hidden;
+  padding-left: 20px;
+}
+
+.title {
+  background-repeat: no-repeat;
+  background-size: 16px;
+  font-size: 15px;
+}
+
+.custom-url {
+  display: flex;
+}
+
+.custom-url-label {
+  flex: 0 0 auto;
+}
+
+.custom-url-value {
+  font-family: monospace;
+  margin-left: 1em;
+}
+
+</style>
+
+<script>
+
+function onLoad() {
+  var tabsListRequest = new XMLHttpRequest();
+  tabsListRequest.open('GET', '/json/list', true);
+  tabsListRequest.onreadystatechange = onReady;
+  tabsListRequest.send();
+}
+
+function onReady() {
+  if(this.readyState == 4 && this.status == 200) {
+    if(this.response != null)
+      var responseJSON = JSON.parse(this.response);
+      for (var i = 0; i < responseJSON.length; ++i)
+        appendItem(responseJSON[i]);
+  }
+}
+
+function onBlur(event) {
+  const selection = window.getSelection();
+  selection.removeAllRanges();
+  event.stopPropagation();
+  event.preventDefault();
+}
+
+function onFocus(selectElement, event) {
+  selectNodeText(selectElement, event);
+  event.stopPropagation();
+  event.preventDefault();
+}
+
+function customFrontendURL(url) {
+  if (!url || !window.location.hash)
+    return null;
+
+  var hashParams = new URLSearchParams(location.hash.substring(1));
+  if (!hashParams.get("custom"))
+    return null;
+
+  var searchIndex = url.indexOf("?");
+  if (searchIndex === -1)
+    return null;
+  var originalParams = url.substring(searchIndex + 1);
+  if (hashParams.get("experiments"))
+    originalParams += "&experiments=true";
+
+  return "devtools://devtools/custom/inspector.html?" + originalParams;
+}
+
+function appendItem(item_object) {
+  var item_element;
+  var customURL = customFrontendURL(item_object.devtoolsFrontendUrl);
+  if (customURL) {
+    item_element = document.createElement('div');
+    item_element.title = item_object.title;
+    item_element.className = 'custom';
+  } else if (item_object.devtoolsFrontendUrl) {
+    item_element = document.createElement('a');
+    item_element.href = item_object.devtoolsFrontendUrl;
+    item_element.title = item_object.title;
+  } else {
+    item_element = document.createElement('div');
+    item_element.className = 'connected';
+    item_element.title = 'The tab already has an active debug session';
+  }
+  item_element.classList.add('item');
+
+  var description = document.createElement('div');
+  description.className = 'description';
+
+  var title = document.createElement('div');
+  title.className = 'title';
+  title.textContent = item_object.description || item_object.title;
+  if (item_object.faviconUrl) {
+    title.style.backgroundImage = 'url(' + item_object.faviconUrl + ')';
+  }
+  description.appendChild(title);
+
+  var subtitle = document.createElement('div');
+  subtitle.className = 'subtitle';
+  subtitle.textContent = (item_object.url || '').substring(0, 300);
+  description.appendChild(subtitle);
+
+  if (customURL) {
+    var urlContainer = document.createElement('div');
+    urlContainer.classList.add("custom-url");
+    var urlLabel = document.createElement('div');
+    urlLabel.classList.add("custom-url-label");
+    urlLabel.textContent = "Click to copy URL:";
+    urlContainer.appendChild(urlLabel);
+    var urlValue = document.createElement('div');
+    urlValue.classList.add("custom-url-value");
+    urlValue.textContent = customURL;
+    urlValue.tabIndex = 0;
+    urlValue.addEventListener('blur', onBlur);
+    urlValue.addEventListener('focus', event => onFocus(urlValue, event));
+    urlContainer.appendChild(urlValue);
+    description.appendChild(urlContainer);
+    item_element.addEventListener('click', selectNodeText.bind(null, urlValue));
+  }
+
+  item_element.appendChild(description);
+
+  document.getElementById('items').appendChild(item_element);
+}
+
+function selectNodeText(selectElement, event)
+{
+  var selection = window.getSelection();
+  if (!selection.isCollapsed)
+    return;
+  var range = document.createRange();
+  range.selectNode(selectElement);
+  selection.removeAllRanges();
+  selection.addRange(range);
+  event.stopPropagation();
+  event.preventDefault();
+}
+</script>
+</head>
+<body onload='onLoad()'>
+  <div role='main'>
+    <div id='caption' role='heading' aria-level='1'>Inspectable pages</div>
+    <div style="margin: 4px">
+      <span style="color: red">WARNING:</span> This page is deprecated and
+      will be removed by m96. Please use
+      <input type="text" readonly value="chrome://inspect" size="13"
+          style="background-color: #e0e0e0; border-width: 0; font-weight: 800">
+      </input> instead. Use <a href="http://crbug.com/1232509"
+        >crbug.com/1232509</a> for comments, questions and feedback.
+    </div>
+  </div>
+
+    <hr>
+    <div id='items'>
+    </div>
+  </div>
+</body>
+</html>
+
+
+16:47:56.555 [ForkJoinPool-1-worker-1] WARN  com.intuit.karate - xml parsing failed, response data type set to string: org.xml.sax.SAXParseException; lineNumber: 1; columnNumber: 3; The markup in the document preceding the root element must be well-formed.
+16:47:56.556 [ForkJoinPool-1-worker-1] DEBUG com.intuit.karate.shell.Command - ready to accept http connections after 1281 ms - http://localhost:9222
+16:47:56.562 [ForkJoinPool-1-worker-1] DEBUG com.intuit.karate - request:
+1 > GET http://localhost:9222/json
+1 > Accept-Encoding: gzip,deflate
+1 > Connection: Keep-Alive
+1 > Host: localhost:9222
+1 > User-Agent: Apache-HttpClient/4.5.12 (Java/1.8.0_181)
+
+16:47:56.565 [ForkJoinPool-1-worker-1] DEBUG com.intuit.karate - response time in milliseconds: 2.23
+1 < 200
+1 < Content-Length: 2182
+1 < Content-Type: application/json; charset=UTF-8
+[ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/4BBE9B4E576B0D62322B3DA9DEF13BED",
+   "id": "4BBE9B4E576B0D62322B3DA9DEF13BED",
+   "title": "CryptoTokenExtension",
+   "type": "background_page",
+   "url": "chrome-extension://kmendfapggjehodndflmmgagdbamhnfd/_generated_background_page.html",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/4BBE9B4E576B0D62322B3DA9DEF13BED"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/151B9D1C85DC2492A1A9DCA1663AEB9B",
+   "id": "151B9D1C85DC2492A1A9DCA1663AEB9B",
+   "title": "Google Network Speech",
+   "type": "background_page",
+   "url": "chrome-extension://neajdppkdcdipfabeoofebfddakdcjhd/_generated_background_page.html",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/151B9D1C85DC2492A1A9DCA1663AEB9B"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/8820DC800E8566E78C25D7E003318F99",
+   "id": "8820DC800E8566E78C25D7E003318F99",
+   "title": "Feedback",
+   "type": "background_page",
+   "url": "chrome-extension://gfdkimpbcpahaombhbimeihdjnejgicl/_generated_background_page.html",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/8820DC800E8566E78C25D7E003318F99"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/E2EA13C89DFCF0CEFC103C79BAD68C32",
+   "id": "E2EA13C89DFCF0CEFC103C79BAD68C32",
+   "title": "Google Hangouts",
+   "type": "background_page",
+   "url": "chrome-extension://nkeimhogjdpnpccoofpliimaahmaaome/background.html",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/E2EA13C89DFCF0CEFC103C79BAD68C32"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/C591B5F4F281F82A5DBBF52070352945",
+   "id": "C591B5F4F281F82A5DBBF52070352945",
+   "title": "Welcome to Chrome",
+   "type": "page",
+   "url": "chrome://welcome/",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/C591B5F4F281F82A5DBBF52070352945"
+} ]
+
+
+16:47:56.569 [ForkJoinPool-1-worker-1] DEBUG c.i.k.driver.chrome_1648648074730 - root frame id: C591B5F4F281F82A5DBBF52070352945
+16:47:57.514 [nioEventLoopGroup-2-1] DEBUG c.i.k.netty.WebSocketClientHandler - websocket client connected
+16:47:57.516 [ForkJoinPool-1-worker-1] DEBUG c.i.k.driver.chrome_1648648074730 - >> {"method":"Target.activateTarget","params":{"targetId":"C591B5F4F281F82A5DBBF52070352945"},"id":1}
+16:47:57.555 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648648074730 - << {"id":1,"result":{}}
+16:47:57.556 [ForkJoinPool-1-worker-1] DEBUG c.i.k.driver.chrome_1648648074730 - >> {"method":"Page.enable","id":2}
+16:47:57.562 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648648074730 - << {"id":2,"result":{}}
+16:47:57.563 [ForkJoinPool-1-worker-1] DEBUG c.i.k.driver.chrome_1648648074730 - >> {"method":"Runtime.enable","id":3}
+16:47:57.567 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648648074730 - << {"method":"Runtime.executionContextCreated","params":{"context":{"id":1,"origin":"chrome://welcome","name":"","uniqueId":"-1537227252154964623.-4484409404536505682","auxData":{"isDefault":true,"type":"default","frameId":"C591B5F4F281F82A5DBBF52070352945"}}}}
+16:47:57.567 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648648074730 - << {"id":3,"result":{}}
+16:47:57.568 [ForkJoinPool-1-worker-1] DEBUG c.i.k.driver.chrome_1648648074730 - >> {"method":"Target.setAutoAttach","params":{"autoAttach":true,"waitForDebuggerOnStart":false,"flatten":true},"id":4}
+16:47:57.570 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648648074730 - << {"id":4,"result":{}}
+16:47:57.571 [ForkJoinPool-1-worker-1] DEBUG c.i.k.driver.chrome_1648648074730 - >> {"method":"Browser.getWindowForTarget","params":{"targetId":"C591B5F4F281F82A5DBBF52070352945"},"id":5}
+16:47:57.572 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648648074730 - << {"id":5,"result":{"windowId":1,"bounds":{"left":10,"top":10,"width":1050,"height":660,"windowState":"normal"}}}
+16:47:57.831 [chrome_1648648074730-out] DEBUG c.i.k.driver.chrome_1648648074730 - [512:2596:0330/164757.830:ERROR:device_event_log_impl.cc(214)] [16:47:57.831] USB: usb_device_handle_win.cc:1049 Failed to read descriptor from node connection: A device attached to the system is not functioning. (0x1F)
+16:47:57.831 [chrome_1648648074730-out] DEBUG c.i.k.driver.chrome_1648648074730 - [512:2596:0330/164757.831:ERROR:device_event_log_impl.cc(214)] [16:47:57.831] USB: usb_device_handle_win.cc:1049 Failed to read descriptor from node connection: A device attached to the system is not functioning. (0x1F)
+16:47:57.952 [ForkJoinPool-1-worker-1] DEBUG c.i.k.driver.chrome_1648648074730 - >> {"method":"Page.navigate","params":{"url":"https:\/\/www.travelski.com\/"},"id":6}
+16:47:58.273 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648648074730 - << {"id":6,"result":{"frameId":"C591B5F4F281F82A5DBBF52070352945","loaderId":"3D5E76EAF10F190B35330015D9A42FF5"}}
+16:47:58.278 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648648074730 - << {"method":"Runtime.executionContextsCleared","params":{}}
+16:47:58.280 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648648074730 - << {"method":"Page.frameStartedLoading","params":{"frameId":"C591B5F4F281F82A5DBBF52070352945"}}
+16:47:58.309 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648648074730 - << {"method":"Runtime.executionContextsCleared","params":{}}
+16:47:58.311 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648648074730 - << {"method":"Page.frameNavigated","params":{"frame":{"id":"C591B5F4F281F82A5DBBF52070352945","loaderId":"3D5E76EAF10F190B35330015D9A42FF5","url":"https://www.travelski.com/","domainAndRegistry":"travelski.com","securityOrigin":"https://www.travelski.com","mimeType":"text/html","adFrameStatus":{"adFrameType":"none"},"secureContextType":"Secure","crossOriginIsolatedContextType":"NotIsolated","gatedAPIFeatures":[]},"type":"Navigation"}}
+16:47:58.313 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648648074730 - << {"method":"Runtime.executionContextCreated","params":{"context":{"id":1,"origin":"https://www.travelski.com","name":"","uniqueId":"-2856364035960019651.1151706938315660102","auxData":{"isDefault":true,"type":"default","frameId":"C591B5F4F281F82A5DBBF52070352945"}}}}
+16:47:59.871 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648648074730 - << {"method":"Runtime.exceptionThrown","params":{"timestamp":1.648648079869405e+12,"exceptionDetails":{"exceptionId":1,"text":"Uncaught","lineNumber":628,"columnNumber":18,"scriptId":"33","url":"https://www.travelski.com/","stackTrace":{"callFrames":[{"functionName":"","scriptId":"33","url":"https://www.travelski.com/","lineNumber":628,"columnNumber":18},{"functionName":"","scriptId":"33","url":"https://www.travelski.com/","lineNumber":657,"columnNumber":2}]},"exception":{"type":"object","subtype":"error","className":"TypeError","description":"TypeError: Cannot read properties of null (reading 'addEventListener')\n    at https://www.travelski.com/:629:19\n    at https://www.travelski.com/:658:3","objectId":"-1033224652350657896.1.1","preview":{"type":"object","subtype":"error","description":"TypeError: Cannot read properties of null (reading 'addEventListener')\n    at https://www.travelski.com/:629:19\n    at https://www.travelski.com/:658:3","overflow":false,"properties":[{"name":"stack","type":"string","value ...
+16:47:59.911 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648648074730 - << {"method":"Runtime.consoleAPICalled","params":{"type":"log","args":[{"type":"string","value":"Maxymizer test initializer is not defined yet. Setting toStart = true;"}],"executionContextId":1,"timestamp":1.6486480799105461e+12,"stackTrace":{"callFrames":[{"functionName":"e","scriptId":"27","url":"https://www.travelski.com/Content/210701094631_5d55777619a3ea6f5ad88670.js?ts=210705071451","lineNumber":1,"columnNumber":657},{"functionName":"","scriptId":"37","url":"https://www.travelski.com/","lineNumber":886,"columnNumber":14},{"functionName":"","scriptId":"37","url":"https://www.travelski.com/","lineNumber":2333,"columnNumber":2}]}}}
+16:47:59.921 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648648074730 - << {"method":"Runtime.exceptionThrown","params":{"timestamp":1.6486480799198699e+12,"exceptionDetails":{"exceptionId":2,"text":"Uncaught","lineNumber":2462,"columnNumber":21,"scriptId":"38","url":"https://www.travelski.com/","exception":{"type":"object","subtype":"error","className":"SyntaxError","description":"SyntaxError: Invalid or unexpected token","objectId":"-1033224652350657896.1.2","preview":{"type":"object","subtype":"error","description":"SyntaxError: Invalid or unexpected token","overflow":false,"properties":[{"name":"stack","type":"string","value":"SyntaxError: Invalid or unexpected token"},{"name":"message","type":"string","value":"Invalid or unexpected token"}]}},"executionContextId":1}}}
+16:47:59.957 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648648074730 - << {"method":"Page.domContentEventFired","params":{"timestamp":10175.527935}}
+16:47:59.962 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - [print] Terminator5
+16:47:59.964 [ForkJoinPool-1-worker-1] DEBUG c.i.k.driver.chrome_1648648074730 - >> {"method":"Target.closeTarget","params":{"targetId":"C591B5F4F281F82A5DBBF52070352945"},"id":7}
+16:47:59.966 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648648074730 - << {"id":7,"result":{"success":true}}
+16:47:59.970 [nioEventLoopGroup-2-1] DEBUG c.i.k.netty.WebSocketClientHandler - websocket client disconnected
+16:47:59.977 [ForkJoinPool-1-worker-1] DEBUG com.intuit.karate.shell.Command - closing command: chrome_1648648074730
+16:48:00.281 [pool-1-thread-1] INFO  com.intuit.karate.Runner - <<pass>> feature 1 of 1: src/test/java/examples/users/users.feature
+16:48:00.315 [chrome_1648648074730] WARN  com.intuit.karate.shell.Command - exit code was non-zero: 1 - [C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, --remote-debugging-port=9222, --no-first-run, --user-data-dir=C:\Users\Pavel\KarateTests\target\chrome_1648648074730, --disable-popup-blocking]
+16:48:00.355 [chrome_1648648074730] DEBUG com.intuit.karate.shell.Command - console readers complete
+17:04:10.129 [main] INFO  com.intuit.karate.Runner - waiting for parallel features to complete ...
+17:04:52.075 [main] INFO  com.intuit.karate.Runner - waiting for parallel features to complete ...
+17:05:41.747 [main] INFO  com.intuit.karate.Runner - waiting for parallel features to complete ...
+17:05:41.888 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - karate.env system property was:  
+17:05:41.951 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - [print] Terminator vs Robocop
+17:05:42.029 [pool-1-thread-1] INFO  com.intuit.karate.Runner - <<pass>> feature 1 of 1: src/test/java/examples/users/Terminator.feature
+17:08:04.627 [main] INFO  com.intuit.karate.Runner - waiting for parallel features to complete ...
+17:08:57.274 [main] INFO  com.intuit.karate.Runner - waiting for parallel features to complete ...
+17:08:57.397 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - karate.env system property was:  
+17:08:57.397 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - karate.env system property was:  
+17:08:57.502 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - [print] Terminator vs Robocop
+17:08:57.511 [ForkJoinPool-1-worker-2] DEBUG com.intuit.karate.shell.Command - found / verified free local port: 9222
+17:08:57.512 [chrome_1648649337510] DEBUG c.i.k.driver.chrome_1648649337510 - command: [C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, --remote-debugging-port=9222, --no-first-run, --user-data-dir=C:\Users\Pavel\KarateTests\target\chrome_1648649337510, --disable-popup-blocking]
+17:08:57.518 [ForkJoinPool-1-worker-2] DEBUG c.i.k.driver.chrome_1648649337510 - poll attempt #0 for port to be ready - localhost:9222
+17:08:57.559 [pool-1-thread-1] INFO  com.intuit.karate.Runner - <<pass>> feature 1 of 2: classpath:examples/users/Terminator.feature
+17:08:57.717 [chrome_1648649337510-out] DEBUG c.i.k.driver.chrome_1648649337510 - 
+17:08:57.718 [chrome_1648649337510-out] DEBUG c.i.k.driver.chrome_1648649337510 - DevTools listening on ws://127.0.0.1:9222/devtools/browser/4bde867a-60f3-4344-82d2-ee8f769b9456
+17:08:59.077 [ForkJoinPool-1-worker-2] DEBUG com.intuit.karate - request:
+1 > GET http://localhost:9222
+1 > Accept-Encoding: gzip,deflate
+1 > Connection: Keep-Alive
+1 > Host: localhost:9222
+1 > User-Agent: Apache-HttpClient/4.5.12 (Java/1.8.0_181)
+
+17:08:59.110 [ForkJoinPool-1-worker-2] DEBUG com.intuit.karate - response time in milliseconds: 31.86
+1 < 200
+1 < Content-Length: 5742
+1 < Content-Type: text/html; charset=UTF-8
+1 < X-Frame-Options: DENY
+<!doctype html>
+<html lang="en">
+<title>Inspectable pages</title>
+<meta name="referrer" content="no-referrer">
+<style>
+body {
+  color: #222;
+  font-family: Helvetica, Arial, sans-serif;
+  margin: 0;
+  text-shadow: rgba(255, 255, 255, 0.496094) 0px 1px 0px;
+}
+
+#caption {
+  font-size: 16px;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  margin-left: 20px;
+  height: 20px;
+  text-align: left;
+}
+
+#items {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+}
+
+.item {
+  color: #222;
+  display: flex;
+  flex-direction: row;
+  text-decoration: none;
+  padding: 10px;
+  transition-property: background-color, border-color;
+  transition: background-color 0.15s, 0.15s;
+  transition-delay: 0ms, 0ms;
+}
+
+.item:not(.connected):hover {
+  background-color: rgba(242, 242, 242, 1);
+  border-color: rgba(110, 116, 128, 1);
+  color: black;
+}
+
+.item.connected:hover {
+  border-color: rgba(184, 184, 184, 1);
+  color: rgb(110, 116, 128);
+}
+
+.item.custom {
+    cursor: pointer;
+}
+
+.description {
+  display: flex;
+  flex-direction: column;
+}
+
+.title, .subtitle, .custom-url {
+  font-size: 13px;
+  margin: 4px 0px 0px 6px;
+  overflow: hidden;
+  padding-left: 20px;
+}
+
+.title {
+  background-repeat: no-repeat;
+  background-size: 16px;
+  font-size: 15px;
+}
+
+.custom-url {
+  display: flex;
+}
+
+.custom-url-label {
+  flex: 0 0 auto;
+}
+
+.custom-url-value {
+  font-family: monospace;
+  margin-left: 1em;
+}
+
+</style>
+
+<script>
+
+function onLoad() {
+  var tabsListRequest = new XMLHttpRequest();
+  tabsListRequest.open('GET', '/json/list', true);
+  tabsListRequest.onreadystatechange = onReady;
+  tabsListRequest.send();
+}
+
+function onReady() {
+  if(this.readyState == 4 && this.status == 200) {
+    if(this.response != null)
+      var responseJSON = JSON.parse(this.response);
+      for (var i = 0; i < responseJSON.length; ++i)
+        appendItem(responseJSON[i]);
+  }
+}
+
+function onBlur(event) {
+  const selection = window.getSelection();
+  selection.removeAllRanges();
+  event.stopPropagation();
+  event.preventDefault();
+}
+
+function onFocus(selectElement, event) {
+  selectNodeText(selectElement, event);
+  event.stopPropagation();
+  event.preventDefault();
+}
+
+function customFrontendURL(url) {
+  if (!url || !window.location.hash)
+    return null;
+
+  var hashParams = new URLSearchParams(location.hash.substring(1));
+  if (!hashParams.get("custom"))
+    return null;
+
+  var searchIndex = url.indexOf("?");
+  if (searchIndex === -1)
+    return null;
+  var originalParams = url.substring(searchIndex + 1);
+  if (hashParams.get("experiments"))
+    originalParams += "&experiments=true";
+
+  return "devtools://devtools/custom/inspector.html?" + originalParams;
+}
+
+function appendItem(item_object) {
+  var item_element;
+  var customURL = customFrontendURL(item_object.devtoolsFrontendUrl);
+  if (customURL) {
+    item_element = document.createElement('div');
+    item_element.title = item_object.title;
+    item_element.className = 'custom';
+  } else if (item_object.devtoolsFrontendUrl) {
+    item_element = document.createElement('a');
+    item_element.href = item_object.devtoolsFrontendUrl;
+    item_element.title = item_object.title;
+  } else {
+    item_element = document.createElement('div');
+    item_element.className = 'connected';
+    item_element.title = 'The tab already has an active debug session';
+  }
+  item_element.classList.add('item');
+
+  var description = document.createElement('div');
+  description.className = 'description';
+
+  var title = document.createElement('div');
+  title.className = 'title';
+  title.textContent = item_object.description || item_object.title;
+  if (item_object.faviconUrl) {
+    title.style.backgroundImage = 'url(' + item_object.faviconUrl + ')';
+  }
+  description.appendChild(title);
+
+  var subtitle = document.createElement('div');
+  subtitle.className = 'subtitle';
+  subtitle.textContent = (item_object.url || '').substring(0, 300);
+  description.appendChild(subtitle);
+
+  if (customURL) {
+    var urlContainer = document.createElement('div');
+    urlContainer.classList.add("custom-url");
+    var urlLabel = document.createElement('div');
+    urlLabel.classList.add("custom-url-label");
+    urlLabel.textContent = "Click to copy URL:";
+    urlContainer.appendChild(urlLabel);
+    var urlValue = document.createElement('div');
+    urlValue.classList.add("custom-url-value");
+    urlValue.textContent = customURL;
+    urlValue.tabIndex = 0;
+    urlValue.addEventListener('blur', onBlur);
+    urlValue.addEventListener('focus', event => onFocus(urlValue, event));
+    urlContainer.appendChild(urlValue);
+    description.appendChild(urlContainer);
+    item_element.addEventListener('click', selectNodeText.bind(null, urlValue));
+  }
+
+  item_element.appendChild(description);
+
+  document.getElementById('items').appendChild(item_element);
+}
+
+function selectNodeText(selectElement, event)
+{
+  var selection = window.getSelection();
+  if (!selection.isCollapsed)
+    return;
+  var range = document.createRange();
+  range.selectNode(selectElement);
+  selection.removeAllRanges();
+  selection.addRange(range);
+  event.stopPropagation();
+  event.preventDefault();
+}
+</script>
+</head>
+<body onload='onLoad()'>
+  <div role='main'>
+    <div id='caption' role='heading' aria-level='1'>Inspectable pages</div>
+    <div style="margin: 4px">
+      <span style="color: red">WARNING:</span> This page is deprecated and
+      will be removed by m96. Please use
+      <input type="text" readonly value="chrome://inspect" size="13"
+          style="background-color: #e0e0e0; border-width: 0; font-weight: 800">
+      </input> instead. Use <a href="http://crbug.com/1232509"
+        >crbug.com/1232509</a> for comments, questions and feedback.
+    </div>
+  </div>
+
+    <hr>
+    <div id='items'>
+    </div>
+  </div>
+</body>
+</html>
+
+
+17:08:59.118 [ForkJoinPool-1-worker-2] WARN  com.intuit.karate - xml parsing failed, response data type set to string: org.xml.sax.SAXParseException; lineNumber: 1; columnNumber: 3; The markup in the document preceding the root element must be well-formed.
+17:08:59.119 [ForkJoinPool-1-worker-2] DEBUG com.intuit.karate.shell.Command - ready to accept http connections after 1057 ms - http://localhost:9222
+17:08:59.127 [ForkJoinPool-1-worker-2] DEBUG com.intuit.karate - request:
+1 > GET http://localhost:9222/json
+1 > Accept-Encoding: gzip,deflate
+1 > Connection: Keep-Alive
+1 > Host: localhost:9222
+1 > User-Agent: Apache-HttpClient/4.5.12 (Java/1.8.0_181)
+
+17:08:59.130 [ForkJoinPool-1-worker-2] DEBUG com.intuit.karate - response time in milliseconds: 3.15
+1 < 200
+1 < Content-Length: 2182
+1 < Content-Type: application/json; charset=UTF-8
+[ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/4BB34E8AE3AC6EE3D9A4F5D46BA9E9EC",
+   "id": "4BB34E8AE3AC6EE3D9A4F5D46BA9E9EC",
+   "title": "CryptoTokenExtension",
+   "type": "background_page",
+   "url": "chrome-extension://kmendfapggjehodndflmmgagdbamhnfd/_generated_background_page.html",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/4BB34E8AE3AC6EE3D9A4F5D46BA9E9EC"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/B23F8ECDED0FCDD859D8338B3C0E4411",
+   "id": "B23F8ECDED0FCDD859D8338B3C0E4411",
+   "title": "Google Network Speech",
+   "type": "background_page",
+   "url": "chrome-extension://neajdppkdcdipfabeoofebfddakdcjhd/_generated_background_page.html",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/B23F8ECDED0FCDD859D8338B3C0E4411"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/6CDAD7B08AF5AF413F35E5340D699327",
+   "id": "6CDAD7B08AF5AF413F35E5340D699327",
+   "title": "Feedback",
+   "type": "background_page",
+   "url": "chrome-extension://gfdkimpbcpahaombhbimeihdjnejgicl/_generated_background_page.html",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/6CDAD7B08AF5AF413F35E5340D699327"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/93B899CB9F49A3FDCDCEF99C37DD4EE6",
+   "id": "93B899CB9F49A3FDCDCEF99C37DD4EE6",
+   "title": "Google Hangouts",
+   "type": "background_page",
+   "url": "chrome-extension://nkeimhogjdpnpccoofpliimaahmaaome/background.html",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/93B899CB9F49A3FDCDCEF99C37DD4EE6"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/9898937C3FE11C4B8572D10BB9204D4A",
+   "id": "9898937C3FE11C4B8572D10BB9204D4A",
+   "title": "Welcome to Chrome",
+   "type": "page",
+   "url": "chrome://welcome/",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/9898937C3FE11C4B8572D10BB9204D4A"
+} ]
+
+
+17:08:59.134 [ForkJoinPool-1-worker-2] DEBUG c.i.k.driver.chrome_1648649337510 - root frame id: 9898937C3FE11C4B8572D10BB9204D4A
+17:08:59.953 [nioEventLoopGroup-2-1] DEBUG c.i.k.netty.WebSocketClientHandler - websocket client connected
+17:08:59.955 [ForkJoinPool-1-worker-2] DEBUG c.i.k.driver.chrome_1648649337510 - >> {"method":"Target.activateTarget","params":{"targetId":"9898937C3FE11C4B8572D10BB9204D4A"},"id":1}
+17:09:00.013 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649337510 - << {"id":1,"result":{}}
+17:09:00.014 [ForkJoinPool-1-worker-2] DEBUG c.i.k.driver.chrome_1648649337510 - >> {"method":"Page.enable","id":2}
+17:09:00.019 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649337510 - << {"id":2,"result":{}}
+17:09:00.020 [ForkJoinPool-1-worker-2] DEBUG c.i.k.driver.chrome_1648649337510 - >> {"method":"Runtime.enable","id":3}
+17:09:00.027 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649337510 - << {"method":"Runtime.executionContextCreated","params":{"context":{"id":1,"origin":"chrome://welcome","name":"","uniqueId":"2820585653503871282.-1353035463411509937","auxData":{"isDefault":true,"type":"default","frameId":"9898937C3FE11C4B8572D10BB9204D4A"}}}}
+17:09:00.028 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649337510 - << {"id":3,"result":{}}
+17:09:00.029 [ForkJoinPool-1-worker-2] DEBUG c.i.k.driver.chrome_1648649337510 - >> {"method":"Target.setAutoAttach","params":{"autoAttach":true,"waitForDebuggerOnStart":false,"flatten":true},"id":4}
+17:09:00.033 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649337510 - << {"id":4,"result":{}}
+17:09:00.033 [ForkJoinPool-1-worker-2] DEBUG c.i.k.driver.chrome_1648649337510 - >> {"method":"Browser.getWindowForTarget","params":{"targetId":"9898937C3FE11C4B8572D10BB9204D4A"},"id":5}
+17:09:00.035 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649337510 - << {"id":5,"result":{"windowId":1,"bounds":{"left":10,"top":10,"width":1050,"height":660,"windowState":"normal"}}}
+17:09:00.133 [chrome_1648649337510-out] DEBUG c.i.k.driver.chrome_1648649337510 - [6784:6648:0330/170900.133:ERROR:device_event_log_impl.cc(214)] [17:09:00.132] USB: usb_device_handle_win.cc:1049 Failed to read descriptor from node connection: A device attached to the system is not functioning. (0x1F)
+17:09:00.133 [chrome_1648649337510-out] DEBUG c.i.k.driver.chrome_1648649337510 - [6784:6648:0330/170900.133:ERROR:device_event_log_impl.cc(214)] [17:09:00.133] USB: usb_device_handle_win.cc:1049 Failed to read descriptor from node connection: A device attached to the system is not functioning. (0x1F)
+17:09:00.348 [ForkJoinPool-1-worker-2] DEBUG c.i.k.driver.chrome_1648649337510 - >> {"method":"Page.navigate","params":{"url":"https:\/\/www.travelski.com\/"},"id":6}
+17:09:00.568 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649337510 - << {"id":6,"result":{"frameId":"9898937C3FE11C4B8572D10BB9204D4A","loaderId":"9E7BC4BF32BB5F32E922386225382E0D"}}
+17:09:00.576 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649337510 - << {"method":"Runtime.executionContextsCleared","params":{}}
+17:09:00.578 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649337510 - << {"method":"Page.frameStartedLoading","params":{"frameId":"9898937C3FE11C4B8572D10BB9204D4A"}}
+17:09:00.610 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649337510 - << {"method":"Runtime.executionContextsCleared","params":{}}
+17:09:00.611 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649337510 - << {"method":"Page.frameNavigated","params":{"frame":{"id":"9898937C3FE11C4B8572D10BB9204D4A","loaderId":"9E7BC4BF32BB5F32E922386225382E0D","url":"https://www.travelski.com/","domainAndRegistry":"travelski.com","securityOrigin":"https://www.travelski.com","mimeType":"text/html","adFrameStatus":{"adFrameType":"none"},"secureContextType":"Secure","crossOriginIsolatedContextType":"NotIsolated","gatedAPIFeatures":[]},"type":"Navigation"}}
+17:09:00.614 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649337510 - << {"method":"Runtime.executionContextCreated","params":{"context":{"id":1,"origin":"https://www.travelski.com","name":"","uniqueId":"1525001910617540162.-3077183311218498693","auxData":{"isDefault":true,"type":"default","frameId":"9898937C3FE11C4B8572D10BB9204D4A"}}}}
+17:09:02.095 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649337510 - << {"method":"Runtime.exceptionThrown","params":{"timestamp":1.6486493420925479e+12,"exceptionDetails":{"exceptionId":1,"text":"Uncaught","lineNumber":628,"columnNumber":18,"scriptId":"40","url":"https://www.travelski.com/","stackTrace":{"callFrames":[{"functionName":"","scriptId":"40","url":"https://www.travelski.com/","lineNumber":628,"columnNumber":18},{"functionName":"","scriptId":"40","url":"https://www.travelski.com/","lineNumber":657,"columnNumber":2}]},"exception":{"type":"object","subtype":"error","className":"TypeError","description":"TypeError: Cannot read properties of null (reading 'addEventListener')\n    at https://www.travelski.com/:629:19\n    at https://www.travelski.com/:658:3","objectId":"7428752177242595326.1.1","preview":{"type":"object","subtype":"error","description":"TypeError: Cannot read properties of null (reading 'addEventListener')\n    at https://www.travelski.com/:629:19\n    at https://www.travelski.com/:658:3","overflow":false,"properties":[{"name":"stack","type":"string","value ...
+17:09:02.131 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649337510 - << {"method":"Runtime.consoleAPICalled","params":{"type":"log","args":[{"type":"string","value":"Maxymizer test initializer is not defined yet. Setting toStart = true;"}],"executionContextId":1,"timestamp":1.648649342129804e+12,"stackTrace":{"callFrames":[{"functionName":"e","scriptId":"26","url":"https://www.travelski.com/Content/210701094631_5d55777619a3ea6f5ad88670.js?ts=210705071451","lineNumber":1,"columnNumber":657},{"functionName":"","scriptId":"44","url":"https://www.travelski.com/","lineNumber":886,"columnNumber":14},{"functionName":"","scriptId":"44","url":"https://www.travelski.com/","lineNumber":2333,"columnNumber":2}]}}}
+17:09:02.137 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649337510 - << {"method":"Runtime.exceptionThrown","params":{"timestamp":1.648649342136131e+12,"exceptionDetails":{"exceptionId":2,"text":"Uncaught","lineNumber":2462,"columnNumber":21,"scriptId":"45","url":"https://www.travelski.com/","exception":{"type":"object","subtype":"error","className":"SyntaxError","description":"SyntaxError: Invalid or unexpected token","objectId":"7428752177242595326.1.2","preview":{"type":"object","subtype":"error","description":"SyntaxError: Invalid or unexpected token","overflow":false,"properties":[{"name":"stack","type":"string","value":"SyntaxError: Invalid or unexpected token"},{"name":"message","type":"string","value":"Invalid or unexpected token"}]}},"executionContextId":1}}}
+17:09:02.226 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649337510 - << {"method":"Page.domContentEventFired","params":{"timestamp":11437.803215}}
+17:09:02.229 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - [print] Terminator5
+17:09:02.230 [ForkJoinPool-1-worker-2] DEBUG c.i.k.driver.chrome_1648649337510 - >> {"method":"Target.closeTarget","params":{"targetId":"9898937C3FE11C4B8572D10BB9204D4A"},"id":7}
+17:09:02.232 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649337510 - << {"id":7,"result":{"success":true}}
+17:09:02.238 [nioEventLoopGroup-2-1] DEBUG c.i.k.netty.WebSocketClientHandler - websocket client disconnected
+17:09:02.245 [ForkJoinPool-1-worker-2] DEBUG com.intuit.karate.shell.Command - closing command: chrome_1648649337510
+17:09:02.378 [pool-1-thread-2] INFO  com.intuit.karate.Runner - <<pass>> feature 2 of 2: classpath:examples/users/users.feature
+17:09:02.537 [chrome_1648649337510] WARN  com.intuit.karate.shell.Command - exit code was non-zero: 1 - [C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, --remote-debugging-port=9222, --no-first-run, --user-data-dir=C:\Users\Pavel\KarateTests\target\chrome_1648649337510, --disable-popup-blocking]
+17:10:42.874 [main] INFO  com.intuit.karate.Runner - waiting for parallel features to complete ...
+17:10:43.008 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - karate.env system property was:  
+17:10:43.008 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - karate.env system property was:  
+17:10:43.118 [ForkJoinPool-1-worker-1] WARN  com.intuit.karate - type was null, defaulting to 'chrome'
+17:10:43.119 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - [print] Terminator vs Robocop
+17:10:43.129 [ForkJoinPool-1-worker-1] DEBUG com.intuit.karate.shell.Command - found / verified free local port: 9222
+17:10:43.130 [chrome_1648649443128] DEBUG c.i.k.driver.chrome_1648649443128 - command: [C:\Program Files (x86)\Google\Chrome\Application\chrome.exe, --remote-debugging-port=9222, --no-first-run, --user-data-dir=C:\Users\Pavel\KarateTests\target\chrome_1648649443128, --disable-popup-blocking]
+17:10:43.136 [ForkJoinPool-1-worker-1] DEBUG c.i.k.driver.chrome_1648649443128 - poll attempt #0 for port to be ready - localhost:9222
+17:10:43.168 [pool-1-thread-1] INFO  com.intuit.karate.Runner - <<pass>> feature 1 of 2: classpath:examples/users/Terminator.feature
+17:10:43.334 [chrome_1648649443128-out] DEBUG c.i.k.driver.chrome_1648649443128 - 
+17:10:43.335 [chrome_1648649443128-out] DEBUG c.i.k.driver.chrome_1648649443128 - DevTools listening on ws://127.0.0.1:9222/devtools/browser/d576b72b-368e-4bf0-b242-ab3570a74cc8
+17:10:44.594 [ForkJoinPool-1-worker-1] DEBUG com.intuit.karate - request:
+1 > GET http://localhost:9222
+1 > Accept-Encoding: gzip,deflate
+1 > Connection: Keep-Alive
+1 > Host: localhost:9222
+1 > User-Agent: Apache-HttpClient/4.5.12 (Java/1.8.0_181)
+
+17:10:44.630 [ForkJoinPool-1-worker-1] DEBUG com.intuit.karate - response time in milliseconds: 35.65
+1 < 200
+1 < Content-Length: 5742
+1 < Content-Type: text/html; charset=UTF-8
+1 < X-Frame-Options: DENY
+<!doctype html>
+<html lang="en">
+<title>Inspectable pages</title>
+<meta name="referrer" content="no-referrer">
+<style>
+body {
+  color: #222;
+  font-family: Helvetica, Arial, sans-serif;
+  margin: 0;
+  text-shadow: rgba(255, 255, 255, 0.496094) 0px 1px 0px;
+}
+
+#caption {
+  font-size: 16px;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  margin-left: 20px;
+  height: 20px;
+  text-align: left;
+}
+
+#items {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+}
+
+.item {
+  color: #222;
+  display: flex;
+  flex-direction: row;
+  text-decoration: none;
+  padding: 10px;
+  transition-property: background-color, border-color;
+  transition: background-color 0.15s, 0.15s;
+  transition-delay: 0ms, 0ms;
+}
+
+.item:not(.connected):hover {
+  background-color: rgba(242, 242, 242, 1);
+  border-color: rgba(110, 116, 128, 1);
+  color: black;
+}
+
+.item.connected:hover {
+  border-color: rgba(184, 184, 184, 1);
+  color: rgb(110, 116, 128);
+}
+
+.item.custom {
+    cursor: pointer;
+}
+
+.description {
+  display: flex;
+  flex-direction: column;
+}
+
+.title, .subtitle, .custom-url {
+  font-size: 13px;
+  margin: 4px 0px 0px 6px;
+  overflow: hidden;
+  padding-left: 20px;
+}
+
+.title {
+  background-repeat: no-repeat;
+  background-size: 16px;
+  font-size: 15px;
+}
+
+.custom-url {
+  display: flex;
+}
+
+.custom-url-label {
+  flex: 0 0 auto;
+}
+
+.custom-url-value {
+  font-family: monospace;
+  margin-left: 1em;
+}
+
+</style>
+
+<script>
+
+function onLoad() {
+  var tabsListRequest = new XMLHttpRequest();
+  tabsListRequest.open('GET', '/json/list', true);
+  tabsListRequest.onreadystatechange = onReady;
+  tabsListRequest.send();
+}
+
+function onReady() {
+  if(this.readyState == 4 && this.status == 200) {
+    if(this.response != null)
+      var responseJSON = JSON.parse(this.response);
+      for (var i = 0; i < responseJSON.length; ++i)
+        appendItem(responseJSON[i]);
+  }
+}
+
+function onBlur(event) {
+  const selection = window.getSelection();
+  selection.removeAllRanges();
+  event.stopPropagation();
+  event.preventDefault();
+}
+
+function onFocus(selectElement, event) {
+  selectNodeText(selectElement, event);
+  event.stopPropagation();
+  event.preventDefault();
+}
+
+function customFrontendURL(url) {
+  if (!url || !window.location.hash)
+    return null;
+
+  var hashParams = new URLSearchParams(location.hash.substring(1));
+  if (!hashParams.get("custom"))
+    return null;
+
+  var searchIndex = url.indexOf("?");
+  if (searchIndex === -1)
+    return null;
+  var originalParams = url.substring(searchIndex + 1);
+  if (hashParams.get("experiments"))
+    originalParams += "&experiments=true";
+
+  return "devtools://devtools/custom/inspector.html?" + originalParams;
+}
+
+function appendItem(item_object) {
+  var item_element;
+  var customURL = customFrontendURL(item_object.devtoolsFrontendUrl);
+  if (customURL) {
+    item_element = document.createElement('div');
+    item_element.title = item_object.title;
+    item_element.className = 'custom';
+  } else if (item_object.devtoolsFrontendUrl) {
+    item_element = document.createElement('a');
+    item_element.href = item_object.devtoolsFrontendUrl;
+    item_element.title = item_object.title;
+  } else {
+    item_element = document.createElement('div');
+    item_element.className = 'connected';
+    item_element.title = 'The tab already has an active debug session';
+  }
+  item_element.classList.add('item');
+
+  var description = document.createElement('div');
+  description.className = 'description';
+
+  var title = document.createElement('div');
+  title.className = 'title';
+  title.textContent = item_object.description || item_object.title;
+  if (item_object.faviconUrl) {
+    title.style.backgroundImage = 'url(' + item_object.faviconUrl + ')';
+  }
+  description.appendChild(title);
+
+  var subtitle = document.createElement('div');
+  subtitle.className = 'subtitle';
+  subtitle.textContent = (item_object.url || '').substring(0, 300);
+  description.appendChild(subtitle);
+
+  if (customURL) {
+    var urlContainer = document.createElement('div');
+    urlContainer.classList.add("custom-url");
+    var urlLabel = document.createElement('div');
+    urlLabel.classList.add("custom-url-label");
+    urlLabel.textContent = "Click to copy URL:";
+    urlContainer.appendChild(urlLabel);
+    var urlValue = document.createElement('div');
+    urlValue.classList.add("custom-url-value");
+    urlValue.textContent = customURL;
+    urlValue.tabIndex = 0;
+    urlValue.addEventListener('blur', onBlur);
+    urlValue.addEventListener('focus', event => onFocus(urlValue, event));
+    urlContainer.appendChild(urlValue);
+    description.appendChild(urlContainer);
+    item_element.addEventListener('click', selectNodeText.bind(null, urlValue));
+  }
+
+  item_element.appendChild(description);
+
+  document.getElementById('items').appendChild(item_element);
+}
+
+function selectNodeText(selectElement, event)
+{
+  var selection = window.getSelection();
+  if (!selection.isCollapsed)
+    return;
+  var range = document.createRange();
+  range.selectNode(selectElement);
+  selection.removeAllRanges();
+  selection.addRange(range);
+  event.stopPropagation();
+  event.preventDefault();
+}
+</script>
+</head>
+<body onload='onLoad()'>
+  <div role='main'>
+    <div id='caption' role='heading' aria-level='1'>Inspectable pages</div>
+    <div style="margin: 4px">
+      <span style="color: red">WARNING:</span> This page is deprecated and
+      will be removed by m96. Please use
+      <input type="text" readonly value="chrome://inspect" size="13"
+          style="background-color: #e0e0e0; border-width: 0; font-weight: 800">
+      </input> instead. Use <a href="http://crbug.com/1232509"
+        >crbug.com/1232509</a> for comments, questions and feedback.
+    </div>
+  </div>
+
+    <hr>
+    <div id='items'>
+    </div>
+  </div>
+</body>
+</html>
+
+
+17:10:44.638 [ForkJoinPool-1-worker-1] WARN  com.intuit.karate - xml parsing failed, response data type set to string: org.xml.sax.SAXParseException; lineNumber: 1; columnNumber: 3; The markup in the document preceding the root element must be well-formed.
+17:10:44.640 [ForkJoinPool-1-worker-1] DEBUG com.intuit.karate.shell.Command - ready to accept http connections after 968 ms - http://localhost:9222
+17:10:44.646 [ForkJoinPool-1-worker-1] DEBUG com.intuit.karate - request:
+1 > GET http://localhost:9222/json
+1 > Accept-Encoding: gzip,deflate
+1 > Connection: Keep-Alive
+1 > Host: localhost:9222
+1 > User-Agent: Apache-HttpClient/4.5.12 (Java/1.8.0_181)
+
+17:10:44.649 [ForkJoinPool-1-worker-1] DEBUG com.intuit.karate - response time in milliseconds: 1.62
+1 < 200
+1 < Content-Length: 2182
+1 < Content-Type: application/json; charset=UTF-8
+[ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/E16E4689A7D49971058018689CFAB75B",
+   "id": "E16E4689A7D49971058018689CFAB75B",
+   "title": "CryptoTokenExtension",
+   "type": "background_page",
+   "url": "chrome-extension://kmendfapggjehodndflmmgagdbamhnfd/_generated_background_page.html",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/E16E4689A7D49971058018689CFAB75B"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/5A7AB8544352BE3E8A5D3C5B137036C7",
+   "id": "5A7AB8544352BE3E8A5D3C5B137036C7",
+   "title": "Google Network Speech",
+   "type": "background_page",
+   "url": "chrome-extension://neajdppkdcdipfabeoofebfddakdcjhd/_generated_background_page.html",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/5A7AB8544352BE3E8A5D3C5B137036C7"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/7E50F311F0183CC2B57279E0C1AF1A7F",
+   "id": "7E50F311F0183CC2B57279E0C1AF1A7F",
+   "title": "Feedback",
+   "type": "background_page",
+   "url": "chrome-extension://gfdkimpbcpahaombhbimeihdjnejgicl/_generated_background_page.html",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/7E50F311F0183CC2B57279E0C1AF1A7F"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/3D9874900C8CB9C738E356D6B1E1E375",
+   "id": "3D9874900C8CB9C738E356D6B1E1E375",
+   "title": "Google Hangouts",
+   "type": "background_page",
+   "url": "chrome-extension://nkeimhogjdpnpccoofpliimaahmaaome/background.html",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/3D9874900C8CB9C738E356D6B1E1E375"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/48898B1099AF46CD659FC68964AE8D12",
+   "id": "48898B1099AF46CD659FC68964AE8D12",
+   "title": "Welcome to Chrome",
+   "type": "page",
+   "url": "chrome://welcome/",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/48898B1099AF46CD659FC68964AE8D12"
+} ]
+
+
+17:10:44.654 [ForkJoinPool-1-worker-1] DEBUG c.i.k.driver.chrome_1648649443128 - root frame id: 48898B1099AF46CD659FC68964AE8D12
+17:10:45.428 [nioEventLoopGroup-2-1] DEBUG c.i.k.netty.WebSocketClientHandler - websocket client connected
+17:10:45.428 [ForkJoinPool-1-worker-1] DEBUG c.i.k.driver.chrome_1648649443128 - >> {"method":"Target.activateTarget","params":{"targetId":"48898B1099AF46CD659FC68964AE8D12"},"id":1}
+17:10:45.464 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649443128 - << {"id":1,"result":{}}
+17:10:45.465 [ForkJoinPool-1-worker-1] DEBUG c.i.k.driver.chrome_1648649443128 - >> {"method":"Page.enable","id":2}
+17:10:45.467 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649443128 - << {"id":2,"result":{}}
+17:10:45.467 [ForkJoinPool-1-worker-1] DEBUG c.i.k.driver.chrome_1648649443128 - >> {"method":"Runtime.enable","id":3}
+17:10:45.471 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649443128 - << {"method":"Runtime.executionContextCreated","params":{"context":{"id":1,"origin":"chrome://welcome","name":"","uniqueId":"-6175469258586475416.830284242807308005","auxData":{"isDefault":true,"type":"default","frameId":"48898B1099AF46CD659FC68964AE8D12"}}}}
+17:10:45.472 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649443128 - << {"id":3,"result":{}}
+17:10:45.473 [ForkJoinPool-1-worker-1] DEBUG c.i.k.driver.chrome_1648649443128 - >> {"method":"Target.setAutoAttach","params":{"autoAttach":true,"waitForDebuggerOnStart":false,"flatten":true},"id":4}
+17:10:45.475 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649443128 - << {"id":4,"result":{}}
+17:10:45.476 [ForkJoinPool-1-worker-1] DEBUG c.i.k.driver.chrome_1648649443128 - >> {"method":"Browser.getWindowForTarget","params":{"targetId":"48898B1099AF46CD659FC68964AE8D12"},"id":5}
+17:10:45.477 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649443128 - << {"id":5,"result":{"windowId":1,"bounds":{"left":10,"top":10,"width":1050,"height":660,"windowState":"normal"}}}
+17:10:45.739 [chrome_1648649443128-out] DEBUG c.i.k.driver.chrome_1648649443128 - [24468:23744:0330/171045.739:ERROR:device_event_log_impl.cc(214)] [17:10:45.740] USB: usb_device_handle_win.cc:1049 Failed to read descriptor from node connection: A device attached to the system is not functioning. (0x1F)
+17:10:45.740 [chrome_1648649443128-out] DEBUG c.i.k.driver.chrome_1648649443128 - [24468:23744:0330/171045.739:ERROR:device_event_log_impl.cc(214)] [17:10:45.740] USB: usb_device_handle_win.cc:1049 Failed to read descriptor from node connection: A device attached to the system is not functioning. (0x1F)
+17:10:45.759 [ForkJoinPool-1-worker-1] DEBUG c.i.k.driver.chrome_1648649443128 - >> {"method":"Page.navigate","params":{"url":"https:\/\/www.travelski.com\/"},"id":6}
+17:10:45.929 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649443128 - << {"id":6,"result":{"frameId":"48898B1099AF46CD659FC68964AE8D12","loaderId":"BAAD2C7CFB0FBE58E045CEE9AB951E8D"}}
+17:10:45.931 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649443128 - << {"method":"Runtime.executionContextsCleared","params":{}}
+17:10:45.932 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649443128 - << {"method":"Page.frameStartedLoading","params":{"frameId":"48898B1099AF46CD659FC68964AE8D12"}}
+17:10:45.962 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649443128 - << {"method":"Runtime.executionContextsCleared","params":{}}
+17:10:45.963 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649443128 - << {"method":"Page.frameNavigated","params":{"frame":{"id":"48898B1099AF46CD659FC68964AE8D12","loaderId":"BAAD2C7CFB0FBE58E045CEE9AB951E8D","url":"https://www.travelski.com/","domainAndRegistry":"travelski.com","securityOrigin":"https://www.travelski.com","mimeType":"text/html","adFrameStatus":{"adFrameType":"none"},"secureContextType":"Secure","crossOriginIsolatedContextType":"NotIsolated","gatedAPIFeatures":[]},"type":"Navigation"}}
+17:10:45.966 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649443128 - << {"method":"Runtime.executionContextCreated","params":{"context":{"id":1,"origin":"https://www.travelski.com","name":"","uniqueId":"8236110089021713268.3956370435184284418","auxData":{"isDefault":true,"type":"default","frameId":"48898B1099AF46CD659FC68964AE8D12"}}}}
+17:10:47.146 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649443128 - << {"method":"Runtime.exceptionThrown","params":{"timestamp":1.648649447145557e+12,"exceptionDetails":{"exceptionId":1,"text":"Uncaught","lineNumber":628,"columnNumber":18,"scriptId":"33","url":"https://www.travelski.com/","stackTrace":{"callFrames":[{"functionName":"","scriptId":"33","url":"https://www.travelski.com/","lineNumber":628,"columnNumber":18},{"functionName":"","scriptId":"33","url":"https://www.travelski.com/","lineNumber":657,"columnNumber":2}]},"exception":{"type":"object","subtype":"error","className":"TypeError","description":"TypeError: Cannot read properties of null (reading 'addEventListener')\n    at https://www.travelski.com/:629:19\n    at https://www.travelski.com/:658:3","objectId":"-1651554542373097107.1.1","preview":{"type":"object","subtype":"error","description":"TypeError: Cannot read properties of null (reading 'addEventListener')\n    at https://www.travelski.com/:629:19\n    at https://www.travelski.com/:658:3","overflow":false,"properties":[{"name":"stack","type":"string","value ...
+17:10:47.177 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649443128 - << {"method":"Runtime.consoleAPICalled","params":{"type":"log","args":[{"type":"string","value":"Maxymizer test initializer is not defined yet. Setting toStart = true;"}],"executionContextId":1,"timestamp":1.648649447176293e+12,"stackTrace":{"callFrames":[{"functionName":"e","scriptId":"29","url":"https://www.travelski.com/Content/210701094631_5d55777619a3ea6f5ad88670.js?ts=210705071451","lineNumber":1,"columnNumber":657},{"functionName":"","scriptId":"37","url":"https://www.travelski.com/","lineNumber":886,"columnNumber":14},{"functionName":"","scriptId":"37","url":"https://www.travelski.com/","lineNumber":2333,"columnNumber":2}]}}}
+17:10:47.184 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649443128 - << {"method":"Runtime.exceptionThrown","params":{"timestamp":1.64864944718365e+12,"exceptionDetails":{"exceptionId":2,"text":"Uncaught","lineNumber":2462,"columnNumber":21,"scriptId":"38","url":"https://www.travelski.com/","exception":{"type":"object","subtype":"error","className":"SyntaxError","description":"SyntaxError: Invalid or unexpected token","objectId":"-1651554542373097107.1.2","preview":{"type":"object","subtype":"error","description":"SyntaxError: Invalid or unexpected token","overflow":false,"properties":[{"name":"stack","type":"string","value":"SyntaxError: Invalid or unexpected token"},{"name":"message","type":"string","value":"Invalid or unexpected token"}]}},"executionContextId":1}}}
+17:10:47.246 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649443128 - << {"method":"Page.domContentEventFired","params":{"timestamp":11542.813916}}
+17:10:47.251 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - [print] Terminator5
+17:10:47.251 [ForkJoinPool-1-worker-1] DEBUG c.i.k.driver.chrome_1648649443128 - >> {"method":"Target.closeTarget","params":{"targetId":"48898B1099AF46CD659FC68964AE8D12"},"id":7}
+17:10:47.253 [nioEventLoopGroup-2-1] DEBUG c.i.k.driver.chrome_1648649443128 - << {"id":7,"result":{"success":true}}
+17:10:47.256 [nioEventLoopGroup-2-1] DEBUG c.i.k.netty.WebSocketClientHandler - websocket client disconnected
+17:10:47.257 [ForkJoinPool-1-worker-1] DEBUG com.intuit.karate.shell.Command - closing command: chrome_1648649443128
+17:10:47.261 [pool-1-thread-2] INFO  com.intuit.karate.Runner - <<pass>> feature 2 of 2: classpath:examples/users/users.feature
+17:11:09.090 [main] INFO  com.intuit.karate.Runner - waiting for parallel features to complete ...
+17:11:09.214 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - karate.env system property was:  
+17:11:09.214 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - karate.env system property was:  
+17:11:09.311 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - [print] Terminator5
+17:11:09.315 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - [print] Terminator vs Robocop
+17:11:09.352 [pool-1-thread-1] INFO  com.intuit.karate.Runner - <<pass>> feature 1 of 2: classpath:examples/users/Terminator.feature
+17:11:09.352 [pool-1-thread-2] INFO  com.intuit.karate.Runner - <<pass>> feature 2 of 2: classpath:examples/users/users.feature
+17:20:37.047 [main] INFO  com.intuit.karate.Runner - waiting for parallel features to complete ...
+17:20:37.172 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - karate.env system property was:  
+17:20:37.172 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - karate.env system property was:  
+17:20:37.265 [ForkJoinPool-1-worker-2] INFO  com.intuit.karate - [print] Terminator5
+17:20:37.265 [ForkJoinPool-1-worker-1] INFO  com.intuit.karate - [print] Terminator vs Robocop
+17:20:37.315 [pool-1-thread-1] INFO  com.intuit.karate.Runner - <<pass>> feature 1 of 2: classpath:examples/users/Terminator.feature
+17:20:37.315 [pool-1-thread-2] INFO  com.intuit.karate.Runner - <<pass>> feature 2 of 2: classpath:examples/users/users.feature
